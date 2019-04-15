@@ -18,10 +18,7 @@ package org.esa.snap.core.gpf.main;
 
 import org.esa.snap.core.mpi.MPIJAI;
 import org.esa.snap.core.util.SystemUtils;
-import org.esa.snap.core.mpi.MPITileScheduler;
-import mpi.*;
 
-import javax.media.jai.JAI;
 import java.util.Locale;
 
 /**
