@@ -99,6 +99,7 @@
         <module>snap-sta</module>
 
         <module>lib-hdf</module>
+        <module>snap-mpi-jai</module>
     </modules>
 
     <organization>
