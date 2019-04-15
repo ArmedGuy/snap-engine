@@ -14,10 +14,8 @@ public class MPITileScheduler implements TileScheduler {
 
     private boolean isMaster = false;
 
-    public MPITileScheduler(TileScheduler scheduler, String[] args) {
+    public MPITileScheduler(TileScheduler scheduler) {
         this.scheduler = scheduler;
-
-        MPI.Init(args);
 
         this.rank = MPI.COMM_WORLD.Rank();
         this.worldSize = MPI.COMM_WORLD.Size();

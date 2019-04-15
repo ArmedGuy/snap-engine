@@ -16,8 +16,12 @@
 
 package org.esa.snap.core.gpf.main;
 
+import org.esa.snap.core.mpi.MPIJAI;
 import org.esa.snap.core.util.SystemUtils;
+import org.esa.snap.core.mpi.MPITileScheduler;
+import mpi.*;
 
+import javax.media.jai.JAI;
 import java.util.Locale;
 
 /**
@@ -28,7 +32,6 @@ import java.util.Locale;
  * @since BEAM 4.10 (renamed from {@code Main}).
  */
 public class GPT {
-
     public static void main(String... args) {
         try {
             run(args);
@@ -50,8 +53,14 @@ public class GPT {
         }
         Locale.setDefault(Locale.ENGLISH); // Force usage of english locale
         SystemUtils.init3rdPartyLibs(GPT.class);
+        if(MPIJAI.UseMPI()) {
+            MPIJAI.Init(args);
+        }
         final CommandLineTool commandLineTool = new CommandLineTool();
         commandLineTool.run(args);
+        if(MPIJAI.UseMPI()) {
+            MPIJAI.Finalize();
+        }
     }
 
 }
