@@ -12,7 +12,7 @@
     <artifactId>snap-mpi-jai</artifactId>
     <packaging>nbm</packaging>
 
-    <name>SNAP MPI Support code</name>
+    <name>SNAP MPI Library for HPC Applications</name>
     <description>MPI bindings for SNAP GPT</description>
     <version>6.0.10-SNAPSHOT</version>
 
@@ -24,6 +24,10 @@
         <dependency>
             <groupId>org.esa.snap</groupId>
             <artifactId>snap-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.esa.snap</groupId>
+            <artifactId>ceres-jai</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -47,6 +51,49 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
+                <configuration>
+                    <publicPackages>
+                        <publicPackage>org.esa.snap.core.mpi.*</publicPackage>
+                    </publicPackages>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <useDefaultManifestFile>true</useDefaultManifestFile>
+                </configuration>
+            </plugin>
 
+            <!--execute each test class in its own JVM process.
+            Added because of problem on some platforms when executing gpf tests.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <reuseForks>false</reuseForks>
+                    <forkCount>1</forkCount>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <Embed-Dependency>mpj</Embed-Dependency>
+                    <Embed-Transitive>true</Embed-Transitive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

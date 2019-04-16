@@ -44,27 +44,31 @@ public class MPITileScheduler implements TileScheduler {
 
     @Override
     public void prefetchTiles(PlanarImage planarImage, Point[] points) {
-
+        this.scheduler.prefetchTiles(planarImage, points);
     }
 
     @Override
     public void setParallelism(int i) {
-
+        this.scheduler.setParallelism(i);
     }
 
     @Override
     public int getParallelism() {
-        return 0;
+        if(this.isMaster) {
+            return this.worldSize * this.scheduler.getParallelism();
+        } else {
+            return this.scheduler.getParallelism();
+        }
     }
 
     @Override
     public void setPrefetchParallelism(int i) {
-
+        this.scheduler.setPrefetchParallelism(i);
     }
 
     @Override
     public int getPrefetchParallelism() {
-        return 0;
+        return this.scheduler.getPrefetchParallelism();
     }
 
     @Override
