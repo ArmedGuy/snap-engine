@@ -44,9 +44,9 @@
             <type>test-jar</type>
         </dependency>
         <dependency>
-            <groupId>mpj</groupId>
-            <artifactId>mpj</artifactId>
-            <version>0.44</version>
+            <groupId>mpi</groupId>
+            <artifactId>mpi</artifactId>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -83,14 +83,6 @@
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <Embed-Dependency>mpj</Embed-Dependency>
-                    <Embed-Transitive>true</Embed-Transitive>
                 </configuration>
             </plugin>
         </plugins>

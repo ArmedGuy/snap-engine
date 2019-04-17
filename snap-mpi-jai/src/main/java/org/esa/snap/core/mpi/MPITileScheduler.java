@@ -9,17 +9,32 @@ public class MPITileScheduler implements TileScheduler {
 
     // Local scheduler to schedule MPI broadcasted tasks on
     private TileScheduler scheduler;
-    private int rank;
-    private int worldSize;
+    private int distributedParallelism = 0;
 
-    private boolean isMaster = false;
-
-    public MPITileScheduler(TileScheduler scheduler) {
+    public MPITileScheduler(TileScheduler scheduler) throws Exception {
         this.scheduler = scheduler;
 
-        this.rank = MPI.COMM_WORLD.Rank();
-        this.worldSize = MPI.COMM_WORLD.Size();
-        this.isMaster = this.rank == 0;
+        int[] p = new int[1];
+        if(MPIJAI.IsMaster()) {
+            int parallellism = this.scheduler.getParallelism();
+
+            for(int i = 1; i < MPIJAI.WorldSize(); i++) {
+                MPI.COMM_WORLD.recv(p, 1, MPI.INT, i, MPIJAI.TAG_TILESCHEDULER);
+                if(parallellism != p[0]) {
+                    System.err.println(
+                            String.format("MPI error: parallelism not homogeneous on all nodes, offending node %d has %d, expected %d",
+                                    i, p[0], parallellism));
+                    throw new Exception("MPI error: parallelism not homogeneous on all nodes");
+                }
+            }
+        } else {
+            p[0] = this.scheduler.getParallelism();
+            MPI.COMM_WORLD.send(p, 1, MPI.INT, 0, MPIJAI.TAG_TILESCHEDULER);
+        }
+
+        distributedParallelism = MPIJAI.WorldSize() * this.scheduler.getParallelism();
+
+        System.out.println(String.format("MPI established, rank: %d, world size: %d", MPIJAI.Rank(), MPIJAI.WorldSize()));
 
     }
     @Override
@@ -54,11 +69,7 @@ public class MPITileScheduler implements TileScheduler {
 
     @Override
     public int getParallelism() {
-        if(this.isMaster) {
-            return this.worldSize * this.scheduler.getParallelism();
-        } else {
-            return this.scheduler.getParallelism();
-        }
+        return this.scheduler.getParallelism();
     }
 
     @Override

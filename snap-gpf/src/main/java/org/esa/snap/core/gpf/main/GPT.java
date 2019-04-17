@@ -34,6 +34,7 @@ public class GPT {
             run(args);
         } catch (Throwable e) {
             String message;
+            e.printStackTrace(System.out);
             if (e.getMessage() != null) {
                 message = e.getMessage();
             } else {
@@ -51,7 +52,7 @@ public class GPT {
         Locale.setDefault(Locale.ENGLISH); // Force usage of english locale
         SystemUtils.init3rdPartyLibs(GPT.class);
         if(MPIJAI.UseMPI()) {
-            MPIJAI.Init(args);
+            args = MPIJAI.Init(args);
         }
         final CommandLineTool commandLineTool = new CommandLineTool();
         commandLineTool.run(args);

@@ -51,6 +51,7 @@ import org.esa.snap.core.gpf.graph.Node;
 import org.esa.snap.core.gpf.graph.NodeContext;
 import org.esa.snap.core.gpf.graph.NodeSource;
 import org.esa.snap.core.gpf.internal.OperatorExecutor;
+import org.esa.snap.core.mpi.MPIJAI;
 import org.esa.snap.core.util.SystemUtils;
 import org.esa.snap.core.util.io.FileUtils;
 import org.xmlpull.mxp1.MXParser;
@@ -279,12 +280,16 @@ class CommandLineTool implements GraphProcessingObserver {
     private void runGraphOrOperator() throws Exception {
         VelocityContext velocityContext = metadataResourceEngine.getVelocityContext();
         velocityContext.put("processingStartTime", DATETIME_FORMAT.format(new Date()));
-        if (commandLineArgs.getOperatorName() != null) {
-            // Operator name given: parameters and sources are parsed from command-line args
-            runOperator();
-        } else if (commandLineArgs.getGraphFilePath() != null) {
-            // Path to Graph XML given: parameters and sources are parsed from command-line args
-            runGraph();
+        if(!MPIJAI.UseMPI() || MPIJAI.IsMaster()) {
+            if (commandLineArgs.getOperatorName() != null) {
+                // Operator name given: parameters and sources are parsed from command-line args
+                runOperator();
+            } else if (commandLineArgs.getGraphFilePath() != null) {
+                // Path to Graph XML given: parameters and sources are parsed from command-line args
+                runGraph();
+            }
+        } else {
+            MPIJAI.WaitForExit();
         }
         velocityContext.put("processingStopTime", DATETIME_FORMAT.format(new Date()));
     }
